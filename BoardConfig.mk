@@ -37,6 +37,7 @@ BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/samsung/i9300/bluetooth
 # Kernel
 TARGET_KERNEL_SOURCE := kernel/samsung/i9300
 TARGET_KERNEL_CONFIG := i9300_defconfig
+BOARD_KERNEL_IMAGE_NAME := zImage-dtb
 BOARD_RIL_CLASS := ../../../device/samsung/i9300/ril
 
 # Recovery
