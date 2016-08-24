@@ -35,17 +35,13 @@ TARGET_REQUIRES_SYNCHRONOUS_SETSURFACE := true
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/samsung/i9300/bluetooth
 
 # Kernel
-TARGET_KERNEL_SOURCE := kernel/samsung/smdk4412
-TARGET_KERNEL_CONFIG := cyanogenmod_i9300_defconfig
+TARGET_KERNEL_SOURCE := kernel/samsung/i9300
+TARGET_KERNEL_CONFIG := i9300_defconfig
 BOARD_RIL_CLASS := ../../../device/samsung/i9300/ril
 
 # Recovery
 TARGET_RECOVERY_FSTAB := device/samsung/i9300/rootdir/fstab.smdk4x12
-TARGET_USERIMAGES_USE_F2FS := true
 RECOVERY_FSTAB_VERSION := 2
-
-# PowerHAL
-TARGET_POWERHAL_VARIANT := pegasusq
 
 # Selinux
 BOARD_SEPOLICY_DIRS += \
