@@ -51,5 +51,9 @@ BOARD_SEPOLICY_DIRS += \
 # assert
 TARGET_OTA_ASSERT_DEVICE := m0,i9300,GT-I9300
 
+ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0 \
+	ro.sys.usb.configfs=1 \
+	ro.sys.usb.controller=12480000.hsotg
+
 # inherit from the proprietary version
 -include vendor/samsung/i9300/BoardConfigVendor.mk

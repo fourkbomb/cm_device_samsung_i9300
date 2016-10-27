@@ -56,12 +56,6 @@ on init
     mount functionfs adb /dev/usb-ffs/adb uid=2000,gid=2000
 
 on boot
-    # always start adb
-    symlink /config/usb_gadget/g1/functions/ffs.adb /config/usb_gadget/g1/configs/c.1/ffs.adb
-    start adbd
-    #Add this 2 second wait/delay to calm things down after adbd restart and before we enable UDC.
-    wait /dev/socket/waiting
-    write /config/usb_gadget/g1/UDC "12480000.hsotg"
 
 on post-fs-data
 # icd
@@ -72,6 +66,13 @@ on post-fs-data
     chown system system /dev/icdr
     chmod 0644 /dev/icdr
     chown system system /dev/tzic
+
+# always start adb
+    symlink /config/usb_gadget/g1/functions/ffs.adb /config/usb_gadget/g1/configs/c.1/ffs.adb
+    start adbd
+    #Add this 2 second wait/delay to calm things down after adbd restart and before we enable UDC.
+    wait /dev/socket/waiting
+    write /config/usb_gadget/g1/UDC "12480000.hsotg"
 
 # make param block device link for SysScope
     symlink /dev/block/mmcblk1p4 /dev/block/param
