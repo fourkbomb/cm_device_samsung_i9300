@@ -34,25 +34,34 @@ on init
     chown system system /sys/devices/system/cpu/cpufreq/pegasusq/max_cpu_lock
     chown system system /sys/devices/system/cpu/cpufreq/pegasusq/sampling_rate
 
+    # Create ConfigFS mount point for USB gadgets
+    # Add standard gadget entries
+    mount configfs none /config
+    mkdir /config/usb_gadget/g1
+    write /config/usb_gadget/g1/idVendor 0x18D1
+    write /config/usb_gadget/g1/idProduct 0x4E26
+    mkdir /config/usb_gadget/g1/strings/0x409
+    write /config/usb_gadget/g1/strings/0x409/serialnumber 0123459876
+    write /config/usb_gadget/g1/strings/0x409/manufacturer Samsung
+    write /config/usb_gadget/g1/strings/0x409/product I9300
+    mkdir /config/usb_gadget/g1/configs/c.1
+    mkdir /config/usb_gadget/g1/configs/c.1/strings/0x409
+    write /config/usb_gadget/g1/configs/c.1/strings/0x409/configuration "Conf 1"
+    write /config/usb_gadget/g1/configs/c.1/MaxPower 120
+
+    # Create adb+ffs gadget function
+    mkdir /config/usb_gadget/g1/functions/ffs.adb
+    mkdir /dev/usb-ffs 0770 shell shell
+    mkdir /dev/usb-ffs/adb 0770 shell shell
+    mount functionfs adb /dev/usb-ffs/adb uid=2000,gid=2000
+
 on boot
-    # Flash storage isn't a good entropy source, and only causes
-    # locking overhead in the kernel. Turn it off.
-    write /sys/block/mmcblk0/queue/add_random 0
-    write /sys/block/mmcblk1/queue/add_random 0
-
-    # KSM
-    write /sys/kernel/mm/ksm/deferred_timer 1
-    write /sys/kernel/mm/ksm/pages_to_scan 100
-    write /sys/kernel/mm/ksm/sleep_millisecs 500
-    write /sys/kernel/mm/ksm/run 0
-
-    # Swapping 1 page at a time is ok
-    write /proc/sys/vm/page-cluster 0
-
-    write /proc/sys/vm/swappiness 100
-
-    # increase read-ahead value to 256 kb
-    write /sys/block/mmcblk0/queue/read_ahead_kb 256
+    # always start adb
+    symlink /config/usb_gadget/g1/functions/ffs.adb /config/usb_gadget/g1/configs/c.1/ffs.adb
+    start adbd
+    #Add this 2 second wait/delay to calm things down after adbd restart and before we enable UDC.
+    wait /dev/socket/waiting
+    write /config/usb_gadget/g1/UDC "12480000.hsotg"
 
 on post-fs-data
 # icd
@@ -65,7 +74,7 @@ on post-fs-data
     chown system system /dev/tzic
 
 # make param block device link for SysScope
-    symlink /dev/block/mmcblk0p4 /dev/block/param
+    symlink /dev/block/mmcblk1p4 /dev/block/param
 
 # Restorecon
     restorecon_recursive /efs
